@@ -3,9 +3,22 @@ package darwin
 import (
 	"fmt"
 	"syscall"
+
+const (
+	kernelHostNameMIB  = "kern.hostname"
+	kernelOSReleaseMIB = "kern.osrelease"
 )
 
-const kernelOSReleaseMIB = "kern.osrelease"
+
+func KernelHostName() (string, error) {
+	hostName, err := syscall.Sysctl(kernelHostNameMIB)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to get hostname: %w", err)
+	}
+
+	return hostName, nil
+}
 
 // Returns the Darwin Kernel Version of the current operating system. Utilizes
 // the `kern.osrelease` MIB name.
